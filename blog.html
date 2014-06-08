@@ -1,0 +1,24 @@
+---
+layout: default
+title: Home
+---
+
+Tags:
+	<div class="category">
+	{{ site.categories | all_category_links }}
+	</div>
+Recent Posts:
+<!-- Show last 5 posts here -->
+{% for post in site.posts limit: 5  %}
+	<article>
+
+        <header>
+            <h2><a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a></h2>
+            <time datetime="{{post.date|date:"%F"}}">{{post.date|date:"%b %d, %Y"}}</time>
+            <div class="category">{{ post.categories | category_links }}</div>
+        </header>
+	
+		<div class="entry">{{ post.excerpt }}</div>
+
+	</article>
+{% endfor %}

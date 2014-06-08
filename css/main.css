@@ -1,6 +1,7 @@
 body {
   font-family:"Segoe UI Light","Helvetica Neue","Segoe UI","Segoe WP",sans-serif;
   font-size:12px;
+  padding-bottom:40px;
 }
 a {
   text-decoration: none;
@@ -14,6 +15,10 @@ a:hover {
 h1 {
   font-size:31px;
   font-weight:100;
+}
+
+article {
+  padding:15px;
 }
 
 article header h1 {
@@ -197,7 +202,14 @@ nav a:nth-child(2), .category a.item-13, .orange {
   opacity:1;
 }
 
+section table tr, section table tr td {
+  padding:5px;
+}
+
 footer {
+  position:absolute;
+  bottom:0;
+  width:100%;
   background:#f5f5f5;
   padding: 10px 0 10px 45%;
 }

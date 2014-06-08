@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html {% if page.fullscreen %} class="fullscreen" {% endif %}>
+    <head>
+        <meta charset="utf-8"/>
+        <title>{% if page.title %} {{ page.title }} | {% endif %} {{ site.name }}</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="{{site.description}}"/>
+        <meta name="author" content="{{site.author}}"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{site.baseurl}}/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class='{% if page.fullscreen %}fullscreen{% endif %}'>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="{{site.baseurl}}/">~/</a>
+                <a href="{{site.baseurl}}/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            {{ content }}
+
+        </main>
+
+        <!-- <footer>
+            &copy; <time>2014</time> Andy Gradl
+        </footer> -->
+
+    </body>
+
+</html>
