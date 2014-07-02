@@ -1,5 +1,6 @@
 jekyll build
 cp ./_config.yml ./_site/_config.yml
+cp ./CNAME ./_site/CNAME
 cd _site
 git init
 git add --all
