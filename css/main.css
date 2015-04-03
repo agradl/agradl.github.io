@@ -14,7 +14,7 @@ a:hover {
 
 h1 {
   font-size:31px;
-  font-weight:100;
+  font-weight:bolder;
 }
 
 article {
@@ -27,7 +27,12 @@ article header h1 {
 
 h2 {
   font-size:26px;
-  font-weight:100;
+  font-weight:bolder;
+}
+
+h3 {
+  font-size:18px;
+  font-weight:bolder;
 }
 
 p{
@@ -36,7 +41,9 @@ p{
   margin-bottom:13px;
 }
 
-
+strong{
+  font-weight:bolder;
+}
 
 #background {
   position:fixed;
@@ -98,7 +105,7 @@ nav {
 }
 
 nav a {
-  
+
   font-size:1.3em;
   font-weight:100;
   color:white;
@@ -207,9 +214,6 @@ section table tr, section table tr td {
 }
 
 footer {
-  position:absolute;
-  bottom:0;
-  width:100%;
   background:#f5f5f5;
-  padding: 10px 0 10px 45%;
+  padding: 10px;
 }

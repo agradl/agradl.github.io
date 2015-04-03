@@ -20,7 +20,7 @@ All of these examples can be run easily using your favorite browser's javascript
 
 Before digging further into the regular expression itself, it's a good idea to understand how they can be used.
 
-**RegExp object usage**
+### RegExp object usage
 
 + exec - returns the first match of the passed string in a new array, even if the global modifier is specified
 
@@ -44,7 +44,7 @@ new RegExp('x').exec('abcdefghij')  //false
 	{% prism javascript %}
 'abcdefg'.replace(/c/,'-') //yields ab-cdefg
 {% endprism %}
-        
+
 + match - returns first match in an array (or all if using the global modifier)
 
 	{% prism javascript %}

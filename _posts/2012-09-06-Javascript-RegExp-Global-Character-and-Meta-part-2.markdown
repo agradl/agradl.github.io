@@ -6,7 +6,7 @@ excerpt: enhance your regex using flags, classes, and meta
 
 ---
 
-**Global Modifier**
+### Global Modifier
 
 Use the global modifier when you want to operate on all cases and not just the first.
 
@@ -15,7 +15,7 @@ Use the global modifier when you want to operate on all cases and not just the f
 "123example123".replace(/2/g,"-") // yields "1-3example1-3"
 {% endprism %}
 
-**Character classes**
+### Character classes
 
 Character classes are a way to match a single character. They can be defined using a set of criteria within the square brackets [ and ] or selected from some special pre-made classes which are declared using meta characters.
 
@@ -24,7 +24,7 @@ Character classes are a way to match a single character. They can be defined usi
 '123digit123'.replace(/[0-9]/g,'-'); //same
 {% endprism %}
 
-**Meta characters**
+### Meta characters
 
 Not all characters are treated equally and many times their location determines their meaning. Within a character class, the carrot ^ in the first position reverses the meaning of the entire class.
 
