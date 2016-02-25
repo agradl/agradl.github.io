@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html >
+    <head>
+        <meta charset="utf-8"/>
+        <title> Caching objects in Asp.net and mvc action cache attributes |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class=''>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <article>
+        <header>
+            <h1>Caching objects in Asp.net and mvc action cache attributes</h1>
+            <div class="category"> <a class='item-6' href='/asp.net'>asp.net</a><a class='item-7' href='/mvc'>mvc</a></div>
+            <time datetime="2012-04-14">Apr 14, 2012</time>
+        </header>
+
+        <div class="entry"><p>Previously, I designed my repository object so that hits to the file system would be eliminated after the post listings were stored in the asp.net cache.</p>
+
+<p>This seemed to work well enough, but if the underlying file were to change, the cache would become outdated. Luckily the cache object comes with some built in expiration dependency features.</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>void InsertIntoCache()
+{
+    var posts = _loader.GetPostDirectory();
+    HttpContext.Current.Cache.Insert(&quot;Posts&quot;, posts, 
+        new CacheDependency(posts.FilePath));
+}</code></pre>
+</div>
+
+
+<p>This causes the cache to expire should the referenced file ever change, so I can freely update the underlying file without worry about clearing the cache.</p>
+
+<p>I could use a similar method for caching the files containing the Markdown, but since each object corresponds to a specific action call it's far easier just to utilize an MVC cache attribute.</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>[OutputCache(Duration=10, Location=OutputCacheLocation.Server)]
+public virtual ActionResult Post(int id, string slug = &quot;&quot;)
+{
+    return View(_repo.GetSinglePost(id));
+}</code></pre>
+</div>
+
+</div>
+
+        <footer><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'agradl';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></footer>
+
+</article>
+
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

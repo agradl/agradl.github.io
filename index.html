@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html  class="fullscreen" >
+    <head>
+        <meta charset="utf-8"/>
+        <title> Home |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class='fullscreen'>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <img id="background" src="/img/bg-1.jpg" />
+
+
+<script type='text/javascript'>
+	$(function () {
+        var win = $(window), 
+        	bg = $('#background'),
+        	bgWidth = 1920,
+        	bgHeight = 1280,
+        	r = bgWidth / bgHeight;
+        var resizeBg = function () {
+            if (win.width() > r * win.height()) {
+                bg.width(win.width())
+                  .height(win.width() / r)
+                  .css('left', 0);
+            } else {
+                bg.css('left', (r * win.height() - win.width()) / -1.5)
+                  .width(win.height() * r)
+                  .height(win.height());
+            }
+        };
+        resizeBg();
+        $(window).resize(resizeBg);
+    });
+</script>
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

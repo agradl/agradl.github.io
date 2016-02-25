@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html >
+    <head>
+        <meta charset="utf-8"/>
+        <title> Javascript RegExp Global, Character, and Meta (part 2) |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class=''>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <article>
+        <header>
+            <h1>Javascript RegExp Global, Character, and Meta (part 2)</h1>
+            <div class="category"> <a class='item-15' href='/javascript'>javascript</a></div>
+            <time datetime="2012-09-06">Sep 06, 2012</time>
+        </header>
+
+        <div class="entry"><h3>Global Modifier</h3>
+
+<p>Use the global modifier when you want to operate on all cases and not just the first.</p>
+
+<div>
+  <pre data-line=''><code class='language-javascript'>&quot;123example123&quot;.match(/2/g) // yields [&quot;2&quot;, &quot;2&quot;]
+&quot;123example123&quot;.replace(/2/g,&quot;-&quot;) // yields &quot;1-3example1-3&quot;</code></pre>
+</div>
+
+
+<h3>Character classes</h3>
+
+<p>Character classes are a way to match a single character. They can be defined using a set of criteria within the square brackets [ and ] or selected from some special pre-made classes which are declared using meta characters.</p>
+
+<div>
+  <pre data-line=''><code class='language-javascript'>&#39;123digit123&#39;.replace(/\d/g,&#39;-&#39;); //yields &quot;---digit---&quot;
+&#39;123digit123&#39;.replace(/[0-9]/g,&#39;-&#39;); //same</code></pre>
+</div>
+
+
+<h3>Meta characters</h3>
+
+<p>Not all characters are treated equally and many times their location determines their meaning. Within a character class, the carrot ^ in the first position reverses the meaning of the entire class.</p>
+
+<div>
+  <pre data-line=''><code class='language-javascript'>&#39;123nondigit123&#39;.replace(/[^0-9]/g,&#39;-&#39;); // &quot;123--------123&quot;
+&#39;123nondigit123&#39;.replace(/\D/g,&#39;-&#39;); // same
+&#39;123digit^and^carrot123&#39;.replace(/[0-9^]/g,&#39;-&#39;) // &quot;---digit-and-carrot---&quot;</code></pre>
+</div>
+
+</div>
+
+        <footer><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'agradl';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></footer>
+
+</article>
+
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

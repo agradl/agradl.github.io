@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html >
+    <head>
+        <meta charset="utf-8"/>
+        <title> docker, docker-compose errors when working with non-TLS swarm |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class=''>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <article>
+        <header>
+            <h1>docker, docker-compose errors when working with non-TLS swarm</h1>
+            <div class="category"> <a class='item-3' href='/docker'>docker</a></div>
+            <time datetime="2016-02-24">Feb 24, 2016</time>
+        </header>
+
+        <div class="entry"><p>The Docker toolbox for Mac OS-X worked perfectly, until I went to work with our private docker swarm host.</p>
+
+<blockquote><p>Error response from daemon: client is newer than server (client API version: 1.22, server API version: 1.20)</p></blockquote>
+
+<p>As the error suggests, your client is newer than your server. Most suggestions involved simply updating the server. Not too helpful if that decision is out of your control. Luckily if you installed the latest toolbox version, they've introduced a new environment flag to downgrade your api version <code>export DOCKER_API_VERSION="1.20"</code> did the trick.</p>
+
+<p>Not so fast.</p>
+
+<blockquote><p>An error occurred trying to connect: Get https://your-server:2375/v1.20/containers/json: tls: oversized record received with length 20527</p></blockquote>
+
+<p>See the problem? Neither did I at first. Those more familiar with docker swarm will realize that port 2375 is for http and 2376 is for https. Our in house swarm doesn't use https yet docker is trying to connect with it. Eventually I get things to work in a new terminal window and discover what the issue is. I was using the terminal opened from the docker toolbox quickstart which helpfully sets some necessary environment variables to connect to the local boot2docker VM using TLS.</p>
+
+<p><code>env | grep DOCKER</code></p>
+
+<blockquote><p>DOCKER_HOST=tcp://your-server:2375
+DOCKER_API_VERSION=1.20
+DOCKER_TLS_VERIFY=1
+DOCKER_CERT_PATH=/Users/agradl/.docker/machine/machines/default
+DOCKER_MACHINE_NAME=default</p></blockquote>
+
+<p><code>unset DOCKER_TLS_VERIFY &amp;&amp; unset DOCKER_CERT_PATH</code> and then I'm back in business. I can <code>docker ps</code> like a boss. Now I'm ready to deploy my container to the swarm. <code>docker-compose -f my-service.yml -p my-service up</code> to deploy and... deja vu.</p>
+
+<blockquote><p>Error response from daemon: client is newer than server (client API version: 1.22, server API version: 1.20)</p></blockquote>
+
+<p>By this point I'm pretty confused. After some intense googling, I see mention that <code>docker-compose</code> is bundled with a separate <code>docker</code> binary! Apparently this bundled version doesn't use the <code>DOCKER_API_VERSION</code> environment variable. Giving up on the installed versions, I finally give in and just downgrade <code>docker-compose</code> using <code>curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose</code>.</p>
+
+<p>Despite all these problems, I was thoroughly impressed with how seamless the toolbox install worked and got me up and running. After downloading it I was creating containers and running a Dockerfile in minutes. Quite a different experience from when I last tried it about a year ago.</p>
+</div>
+
+        <footer><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'agradl';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></footer>
+
+</article>
+
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

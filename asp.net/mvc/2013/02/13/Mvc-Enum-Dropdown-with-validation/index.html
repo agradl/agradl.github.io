@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html >
+    <head>
+        <meta charset="utf-8"/>
+        <title> Mvc Enum Dropdown with validation |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class=''>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <article>
+        <header>
+            <h1>Mvc Enum Dropdown with validation</h1>
+            <div class="category"> <a class='item-11' href='/asp.net'>asp.net</a><a class='item-4' href='/mvc'>mvc</a></div>
+            <time datetime="2013-02-13">Feb 13, 2013</time>
+        </header>
+
+        <div class="entry"><p>A very frequent question I see is how to make working with dropdown lists easy. Most of the solutions you can find involve a quick and dirty approach. I say dirty because it appears to solve the problem, but really leaves you without server validation.</p>
+
+<p>Sure you can pass a SelectList to your view through the ViewBag or a property on the model, but it really only solves half the problem. An ideal solution is hidden from your view and controller and requires only decorating your model with an attribute.</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>public class ModelWithEnumField
+{
+    [EnumDropDown(typeof(Status))]
+    public Status CurrentStatus { get; set; }
+}</code></pre>
+</div>
+
+
+<p>Providing the available options for the dropdown and the validation can be handled within the attribute using the enum's type for its possible values. This could also be easily extended to have separate text for the SelectListItem Text and Value properties, using attributes on the enum itself.</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>[AttributeUsage(AttributeTargets.Property)]
+public class EnumDropDownAttribute : ValidationAttribute, IMetadataAware
+{
+    public Type EnumType { get; set; }
+
+    public EnumDropDownAttribute(Type enumType)
+    {
+        EnumType = enumType;
+        ErrorMessage = &quot;The submitted value for {0} was not in the list of expected options&quot;;
+    }
+
+    public void OnMetadataCreated(ModelMetadata metadata)
+    {
+        metadata.TemplateHint = &quot;EnumDropdown&quot;;
+        var selectItems = GetValues()
+            .Select(x =&gt; new SelectListItem
+                             {
+                                 Text = x,
+                                 Value = x
+                             });
+        metadata.AdditionalValues[&quot;EnumValues&quot;] = selectItems;
+    }
+
+    private IEnumerable&lt;string&gt; GetValues()
+    {
+        return Enum
+            .GetValues(EnumType)
+            .Cast&lt;object&gt;()
+            .Select(x =&gt; x.ToString());
+    } 
+
+    public override bool IsValid(object value)
+    {
+        if (value == null || !(value is string))
+            return true;
+        return GetValues().Any(x =&gt; x == value as string);
+    }
+}</code></pre>
+</div>
+
+
+<p>Above, I inherit from the ValidationAttribute so that I get server model validation without additional code in my controller. I could also use a string for the property type on my model and it would be validated just the same. The IMetadataAware interface ensures that my attribute will be called to provide meta data before the model's view is selected. The TemplateHint property basically does the same thing as either of the following.</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>[DataType(&quot;EnumDropdown&quot;)]
+[UIHint(&quot;EnumDropdown&quot;)]
+@Html.EditorFor(m=&gt;m.CurrentStatus,&quot;EditorTemplates/EnumDropdown&quot;)</code></pre>
+</div>
+
+
+<p>And finally, I create a generic dropdown list template under Views\Shared\EditorTemplates\EnumDropdown.cshtml</p>
+
+<div>
+  <pre data-line=''><code class='language-csharp'>@model object
+@{
+    var values = (ViewData.ModelMetadata.AdditionalValues[&quot;EnumValues&quot;] as IEnumerable&lt;SelectListItem&gt;);
+}
+@Html.DropDownListFor(m =&gt; m, values)</code></pre>
+</div>
+
+</div>
+
+        <footer><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'agradl';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></footer>
+
+</article>
+
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

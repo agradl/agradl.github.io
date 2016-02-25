@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html >
+    <head>
+        <meta charset="utf-8"/>
+        <title> Getting around github pages safe mode jekyll restrictions |  Andy Gradl</title>
+        <link rel="stylesheet" href="/css/reset.css" />
+        <link rel="stylesheet" href="/css/prism.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <meta name="description" content="a blog about random dev related stuff"/>
+        <meta name="author" content="Andy Gradl"/>
+        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
+        <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+    </head>
+
+    <body class=''>
+        <header>
+            a blog about dev stuff
+            <hr />
+        </header>
+
+        <main>
+            <nav>
+                <a href="/">~/</a>
+                <a href="/blog">blog</a>
+                <a href="https://github.com/agradl">github</a>
+                <a href="https://www.linkedin.com/pub/andy-gradl/9/366/5ab">linkedin</a>
+            </nav>
+
+            <article>
+        <header>
+            <h1>Getting around github pages safe mode jekyll restrictions</h1>
+            <div class="category"> <a class='item-7' href='/gh-pages'>gh-pages</a></div>
+            <time datetime="2015-04-03">Apr 03, 2015</time>
+        </header>
+
+        <div class="entry"><p>One of the first surprises most people encounter when hosting their website on <a href="https://pages.github.com/">github pages</a> is that <a href="http://jekyllrb.com/">jekyll</a> doesn't work quite the as they expect. This is because they run a safe mode jekyll configuration with a <a href="https://help.github.com/articles/using-jekyll-plugins-with-github-pages/">whitelist of plugins</a> for you to use. Since jekyll generates a static website, this is easy to work around by just generating your website locally and then pushing just the static site to github pages.</p>
+
+<p>To get started you'll want to have the following:
++ some form of ruby, I prefer using <a href="https://rvm.io/">rvm</a> to manage multiple ruby versions
++ <a href="http://jekyllrb.com/">jekyll</a> locally installed</p>
+
+<p>Then create your jekyll site in a new branch of your repository. This is where you will make future changes to the site.</p>
+
+<p>To deploy your site to github pages, you can perform the following steps or just put them in a shell script for repeated use.</p>
+
+<div>
+  <pre data-line=''><code class='language-bash'>jekyll build
+cp ./_config.yml ./_site/_config.yml
+cp ./CNAME ./_site/CNAME
+cd _site
+git init
+git add --all
+git commit -m &quot;update&quot;
+git push -f https://github.com/agradl/agradl.github.io.git master
+cd ../
+rm -rf _site</code></pre>
+</div>
+
+
+<p>Note: if this is for a project page, then instead of pushing to the <strong>master</strong> branch, you should be pushing to the <strong>gh-pages</strong> branch.</p>
+</div>
+
+        <footer><div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'agradl';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></footer>
+
+</article>
+
+
+
+        </main>
+
+        <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10420616-4']);
+    _gaq.push(['_setDomainName', 'andygradl.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+    </body>
+
+</html>

@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Textarea Explorer - by Andy Gradl</title>
+    <style type="text/css">
+        .code {
+            border: solid 1px black;
+            padding: 2px;
+            margin: 1px;
+            float: left;
+            cursor: pointer;
+        }
+        .selected {
+            background: yellow;
+        }
+        table tr td {
+            padding: 4px;
+            margin: 0;
+            border: solid 1px black;
+            text-align: center;
+        }
+        table
+        {
+            border-spacing: 0;
+        }
+    </style>
+</head>
+    <body style="width:900px;margin:auto;">
+        <h1>Textarea Explorer</h1>
+        by Andy Gradl
+        <div>
+            <div style="width:400px;float:left;margin:10px;">
+                <h3>Properties</h3>
+                <table style="width:100%;">
+                    <tr>
+                        <td>Name</td>
+                        <td>Value</td>
+                    </tr>
+                    <tr>
+                        <td>rows</td>
+                        <td><input type="range" min="0" max="30" data-property-name="rows" value="25"/></td>
+                    </tr>
+                    <tr>
+                        <td>cols</td>
+                        <td><input type="range" min="0" max="70" data-property-name="cols" value="45"/></td>
+                    </tr>
+                    <tr>
+                        <td>disabled</td>
+                        <td><input type="checkbox" data-property-name="disabled" data-property-value="disabled" /></td>
+                    </tr>
+                    <tr>
+                        <td>readonly</td>
+                        <td><input type="checkbox" data-property-name="readonly" data-property-value="readonly" /></td>
+                    </tr>
+                </table>
+                <h3>Character codes (click each code for info)</h3>
+                <div id="display"></div>
+                <div>
+                    <h3>Code Info</h3>
+                </div>
+                <table style="width:100%;">
+                    <tr>
+                        <td>ASCII code</td>
+                        <td>symbol</td>
+                        <td>HTML #</td>
+                        <td>Html name</td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td id="code">&nbsp;</td>
+                        <td id="symbol">&nbsp;</td>
+                        <td id="htmlNum">&nbsp;</td>
+                        <td id="htmlName">&nbsp;</td>
+                        <td id="desc">&nbsp;</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="width:400px;float:left;margin:10px;">
+                <h3>Textarea</h3>
+                <h4>Last Keycode : <span id="keycode"></span></h4>
+                <h4>Html</h4>
+                <pre id="markup" style="width:400px;"></pre>
+                <h4>Input</h4>
+                <textarea rows="25" cols="45"></textarea>
+
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script type="text/javascript">
+            var asciiCodes = [
+                { code: 9, props: ['', '&#09', '', 'horizontal tab'] },
+                { code: 10, props: ['\\n', '&#10', '', 'line feed'] },
+                { code: 32, props: ['', '&#32;', '', 'space'] },
+                { code: 33, props: ['!', '&#33;', '', 'exclamation point'] },
+                { code: 34, props: ['"', '&#34;', '&quot;', 'double quotes'] },
+                { code: 35, props: ['#', '&#35;', '', 'number sign'] },
+                { code: 36, props: ['$', '&#36;', '', 'dollar sign'] },
+                { code: 37, props: ['%', '&#37;', '', 'percent sign'] },
+                { code: 38, props: ['&', '&#38;', '&amp;', 'ampersand'] },
+                { code: 39, props: ["'", '&# 39;', '', 'single quote'] },
+                { code: 40, props: ['(', '&#40;', '', 'opening parenthesis'] },
+                { code: 41, props: [')', '&#41;', '', 'closing parenthesis'] },
+                { code: 42, props: ['*', '&#42;', '', 'asterisk'] },
+                { code: 43, props: ['+', '&#43;', '', 'plus sign'] },
+                { code: 44, props: [',', '&#44;', '', 'comma'] },
+                { code: 45, props: ['-', '&#45;', '', 'minus sign - hyphen'] },
+                { code: 46, props: ['.', '&#46;', '', 'period'] },
+                { code: 47, props: ['/', '&#47;', '', 'slash'] },
+                { code: 48, props: ['0', '&#48;', '', 'zero'] },
+                { code: 49, props: ['1', '&#49;', '', 'one'] },
+                { code: 50, props: ['2', '&#50;', '', 'two'] },
+                { code: 51, props: ['3', '&#51;', '', 'three'] },
+                { code: 52, props: ['4', '&#52;', '', 'four'] },
+                { code: 53, props: ['5', '&#53;', '', 'five'] },
+                { code: 54, props: ['6', '&#54;', '', 'six'] },
+                { code: 55, props: ['7', '&#55;', '', 'seven'] },
+                { code: 56, props: ['8', '&#56;', '', 'eight'] },
+                { code: 57, props: ['9', '&#57;', '', 'nine'] },
+                { code: 58, props: [':', '&#58;', '', 'colon'] },
+                { code: 59, props: [';', '&#59;', '', 'semicolon'] },
+                { code: 60, props: ['<', '&#60;', '&lt;', 'less than sign'] },
+                { code: 61, props: ['=', '&#61;', '', 'equal sign'] },
+                { code: 62, props: ['>', '&#62;', '&gt;', 'greater than sign'] },
+                { code: 63, props: ['?', '&#63;', '', 'question mark'] },
+                { code: 64, props: ['@@', '&#64;', '', 'at symbol'] },
+                { code: 65, props: ['A', '&#65;', '', ''] },
+                { code: 66, props: ['B', '&#66;', '', ''] },
+                { code: 67, props: ['C', '&#67;', '', ''] },
+                { code: 68, props: ['D', '&#68;', '', ''] },
+                { code: 69, props: ['E', '&#69;', '', ''] },
+                { code: 70, props: ['F', '&#70;', '', ''] },
+                { code: 71, props: ['G', '&#71;', '', ''] },
+                { code: 72, props: ['H', '&#72;', '', ''] },
+                { code: 73, props: ['I', '&#73;', '', ''] },
+                { code: 74, props: ['J', '&#74;', '', ''] },
+                { code: 75, props: ['K', '&#75;', '', ''] },
+                { code: 76, props: ['L', '&#76;', '', ''] },
+                { code: 77, props: ['M', '&#77;', '', ''] },
+                { code: 78, props: ['N', '&#78;', '', ''] },
+                { code: 79, props: ['O', '&#79;', '', ''] },
+                { code: 80, props: ['P', '&#80;', '', ''] },
+                { code: 81, props: ['Q', '&#81;', '', ''] },
+                { code: 82, props: ['R', '&#82;', '', ''] },
+                { code: 83, props: ['S', '&#83;', '', ''] },
+                { code: 84, props: ['T', '&#84;', '', ''] },
+                { code: 85, props: ['U', '&#85;', '', ''] },
+                { code: 86, props: ['V', '&#86;', '', ''] },
+                { code: 87, props: ['W', '&#87;', '', ''] },
+                { code: 88, props: ['X', '&#88;', '', ''] },
+                { code: 89, props: ['Y', '&#89;', '', ''] },
+                { code: 90, props: ['Z', '&#90;', '', ''] },
+                { code: 91, props: ['[', '&#91;', '', 'opening bracket'] },
+                { code: 92, props: ['\\', '&#92;', '', 'backslash'] },
+                { code: 93, props: [']', '&#93;', '', 'closing bracket'] },
+                { code: 94, props: ['^', '&#94;', '', 'caret - circumflex'] },
+                { code: 95, props: ['_', '&#95;', '', 'underscore'] },
+                { code: 96, props: ['`', '&#96;', '', 'grave accent'] },
+                { code: 97, props: ['a', '&#97;', '', ''] },
+                { code: 98, props: ['b', '&#98;', '', ''] },
+                { code: 99, props: ['c', '&#99;', '', ''] },
+                { code: 100, props: ['d', '&#100;', '', ''] },
+                { code: 101, props: ['e', '&#101;', '', ''] },
+                { code: 102, props: ['f', '&#102;', '', ''] },
+                { code: 103, props: ['g', '&#103;', '', ''] },
+                { code: 104, props: ['h', '&#104;', '', ''] },
+                { code: 105, props: ['i', '&#105;', '', ''] },
+                { code: 106, props: ['j', '&#106;', '', ''] },
+                { code: 107, props: ['k', '&#107;', '', ''] },
+                { code: 108, props: ['l', '&#108;', '', ''] },
+                { code: 109, props: ['m', '&#109;', '', ''] },
+                { code: 110, props: ['n', '&#110;', '', ''] },
+                { code: 111, props: ['o', '&#111;', '', ''] },
+                { code: 112, props: ['p', '&#112;', '', ''] },
+                { code: 113, props: ['q', '&#113;', '', ''] },
+                { code: 114, props: ['r', '&#114;', '', ''] },
+                { code: 115, props: ['s', '&#115;', '', ''] },
+                { code: 116, props: ['t', '&#116;', '', ''] },
+                { code: 117, props: ['u', '&#117;', '', ''] },
+                { code: 118, props: ['v', '&#118;', '', ''] },
+                { code: 119, props: ['w', '&#119;', '', ''] },
+                { code: 120, props: ['x', '&#120;', '', ''] },
+                { code: 121, props: ['y', '&#121;', '', ''] },
+                { code: 122, props: ['z', '&#122;', '', ''] },
+                { code: 123, props: ['{', '&#123;', '', 'opening brace'] },
+                { code: 124, props: ['|', '&#124;', '', 'vertical bar'] },
+                { code: 125, props: ['}', '&#125;', '', 'closing brace'] },
+                { code: 126, props: ['~', '&#126;', '', 'equivalency sign - tilde'] },
+                { code: 160, props: ['', '&#160;', '&nbsp;', 'non-breaking space'] },
+                { code: 161, props: ['¡', '&#161;', '&iexcl;', 'inverted exclamation mark'] },
+                { code: 162, props: ['¢', '&#162;', '&cent;', 'cent sign'] },
+                { code: 163, props: ['£', '&#163;', '&pound;', 'pound sign'] },
+                { code: 164, props: ['¤', '&#164;', '&curren;', 'currency sign'] },
+                { code: 165, props: ['¥', '&#165;', '&yen;', 'yen sign'] },
+                { code: 166, props: ['¦', '&#166;', '&brvbar;', 'broken vertical bar'] },
+                { code: 167, props: ['§', '&#167;', '&sect;', 'section sign'] },
+                { code: 168, props: ['¨', '&#168;', '&uml;', 'spacing diaeresis - umlaut'] },
+                { code: 169, props: ['©', '&#169;', '&copy;', 'copyright sign'] },
+                { code: 170, props: ['ª', '&#170;', '&ordf;', 'feminine ordinal indicator'] },
+                { code: 171, props: ['«', '&#171;', '&laquo;', 'left double angle quotes'] },
+                { code: 172, props: ['¬', '&#172;', '&not;', 'not sign'] },
+                { code: 173, props: ['', '&#173;', '&shy;', 'soft hyphen'] },
+                { code: 174, props: ['®', '&#174;', '&reg;', 'registered trade mark sign'] },
+                { code: 175, props: ['¯', '&#175;', '&macr;', 'spacing macron - overline'] },
+                { code: 176, props: ['°', '&#176;', '&deg;', 'degree sign'] },
+                { code: 177, props: ['±', '&#177;', '&plusmn;', 'plus-or-minus sign'] },
+                { code: 178, props: ['²', '&#178;', '&sup2;', 'superscript two - squared'] },
+                { code: 179, props: ['³', '&#179;', '&sup3;', 'superscript three - cubed'] },
+                { code: 180, props: ['´', '&#180;', '&acute;', 'acute accent - spacing acute'] },
+                { code: 181, props: ['µ', '&#181;', '&micro;', 'micro sign'] },
+                { code: 182, props: ['¶', '&#182;', '&para;', 'pilcrow sign - paragraph sign'] },
+                { code: 183, props: ['·', '&#183;', '&middot;', 'middle dot - Georgian comma'] },
+                { code: 184, props: ['¸', '&#184;', '&cedil;', 'spacing cedilla'] },
+                { code: 185, props: ['¹', '&#185;', '&sup1;', 'superscript one'] },
+                { code: 186, props: ['º', '&#186;', '&ordm;', 'masculine ordinal indicator'] },
+                { code: 187, props: ['»', '&#187;', '&raquo;', 'right double angle quotes'] },
+                { code: 188, props: ['¼', '&#188;', '&frac14;', 'fraction one quarter'] },
+                { code: 189, props: ['½', '&#189;', '&frac12;', 'fraction one half'] },
+                { code: 190, props: ['¾', '&#190;', '&frac34;', 'fraction three quarters'] },
+                { code: 191, props: ['¿', '&#191;', '&iquest;', 'inverted question mark'] },
+                { code: 192, props: ['À', '&#192;', '&Agrave;', 'latin capital letter A with grave'] },
+                { code: 193, props: ['Á', '&#193;', '&Aacute;', 'latin capital letter A with acute'] },
+                { code: 194, props: ['Â', '&#194;', '&Acirc;', 'latin capital letter A with circumflex'] },
+                { code: 195, props: ['Ã', '&#195;', '&Atilde;', 'latin capital letter A with tilde'] },
+                { code: 196, props: ['Ä', '&#196;', '&Auml;', 'latin capital letter A with diaeresis'] },
+                { code: 197, props: ['Å', '&#197;', '&Aring;', 'latin capital letter A with ring above'] },
+                { code: 198, props: ['Æ', '&#198;', '&AElig;', 'latin capital letter AE'] },
+                { code: 199, props: ['Ç', '&#199;', '&Ccedil;', 'latin capital letter C with cedilla'] },
+                { code: 200, props: ['È', '&#200;', '&Egrave;', 'latin capital letter E with grave'] },
+                { code: 201, props: ['É', '&#201;', '&Eacute;', 'latin capital letter E with acute'] },
+                { code: 202, props: ['Ê', '&#202;', '&Ecirc;', 'latin capital letter E with circumflex'] },
+                { code: 203, props: ['Ë', '&#203;', '&Euml;', 'latin capital letter E with diaeresis'] },
+                { code: 204, props: ['Ì', '&#204;', '&Igrave;', 'latin capital letter I with grave'] },
+                { code: 205, props: ['Í', '&#205;', '&Iacute;', 'latin capital letter I with acute'] },
+                { code: 206, props: ['Î', '&#206;', '&Icirc;', 'latin capital letter I with circumflex'] },
+                { code: 207, props: ['Ï', '&#207;', '&Iuml;', 'latin capital letter I with diaeresis'] },
+                { code: 208, props: ['Ð', '&#208;', '&ETH;', 'latin capital letter ETH'] },
+                { code: 209, props: ['Ñ', '&#209;', '&Ntilde;', 'latin capital letter N with tilde'] },
+                { code: 210, props: ['Ò', '&#210;', '&Ograve;', 'latin capital letter O with grave'] },
+                { code: 211, props: ['Ó', '&#211;', '&Oacute;', 'latin capital letter O with acute'] },
+                { code: 212, props: ['Ô', '&#212;', '&Ocirc;', 'latin capital letter O with circumflex'] },
+                { code: 213, props: ['Õ', '&#213;', '&Otilde;', 'latin capital letter O with tilde'] },
+                { code: 214, props: ['Ö', '&#214;', '&Ouml;', 'latin capital letter O with diaeresis'] },
+                { code: 215, props: ['×', '&#215;', '&times;', 'multiplication sign'] },
+                { code: 216, props: ['Ø', '&#216;', '&Oslash;', 'latin capital letter O with slash'] },
+                { code: 217, props: ['Ù', '&#217;', '&Ugrave;', 'latin capital letter U with grave'] },
+                { code: 218, props: ['Ú', '&#218;', '&Uacute;', 'latin capital letter U with acute'] },
+                { code: 219, props: ['Û', '&#219;', '&Ucirc;', 'latin capital letter U with circumflex'] },
+                { code: 220, props: ['Ü', '&#220;', '&Uuml;', 'latin capital letter U with diaeresis'] },
+                { code: 221, props: ['Ý', '&#221;', '&Yacute;', 'latin capital letter Y with acute'] },
+                { code: 222, props: ['Þ', '&#222;', '&THORN;', 'latin capital letter THORN'] },
+                { code: 223, props: ['ß', '&#223;', '&szlig;', 'latin small letter sharp s - ess-zed'] },
+                { code: 224, props: ['à', '&#224;', '&agrave;', 'latin small letter a with grave'] },
+                { code: 225, props: ['á', '&#225;', '&aacute;', 'latin small letter a with acute'] },
+                { code: 226, props: ['â', '&#226;', '&acirc;', 'latin small letter a with circumflex'] },
+                { code: 227, props: ['ã', '&#227;', '&atilde;', 'latin small letter a with tilde'] },
+                { code: 228, props: ['ä', '&#228;', '&auml;', 'latin small letter a with diaeresis'] },
+                { code: 229, props: ['å', '&#229;', '&aring;', 'latin small letter a with ring above'] },
+                { code: 230, props: ['æ', '&#230;', '&aelig;', 'latin small letter ae'] },
+                { code: 231, props: ['ç', '&#231;', '&ccedil;', 'latin small letter c with cedilla'] },
+                { code: 232, props: ['è', '&#232;', '&egrave;', 'latin small letter e with grave'] },
+                { code: 233, props: ['é', '&#233;', '&eacute;', 'latin small letter e with acute'] },
+                { code: 234, props: ['ê', '&#234;', '&ecirc;', 'latin small letter e with circumflex'] },
+                { code: 235, props: ['ë', '&#235;', '&euml;', 'latin small letter e with diaeresis'] },
+                { code: 236, props: ['ì', '&#236;', '&igrave;', 'latin small letter i with grave'] },
+                { code: 237, props: ['í', '&#237;', '&iacute;', 'latin small letter i with acute'] },
+                { code: 238, props: ['î', '&#238;', '&icirc;', 'latin small letter i with circumflex'] },
+                { code: 239, props: ['ï', '&#239;', '&iuml;', 'latin small letter i with diaeresis'] },
+                { code: 240, props: ['ð', '&#240;', '&eth;', 'latin small letter eth'] },
+                { code: 241, props: ['ñ', '&#241;', '&ntilde;', 'latin small letter n with tilde'] },
+                { code: 242, props: ['ò', '&#242;', '&ograve;', 'latin small letter o with grave'] },
+                { code: 243, props: ['ó', '&#243;', '&oacute;', 'latin small letter o with acute'] },
+                { code: 244, props: ['ô', '&#244;', '&ocirc;', 'latin small letter o with circumflex'] },
+                { code: 245, props: ['õ', '&#245;', '&otilde;', 'latin small letter o with tilde'] },
+                { code: 246, props: ['ö', '&#246;', '&ouml;', 'latin small letter o with diaeresis'] },
+                { code: 247, props: ['÷', '&#247;', '&divide;', 'division sign'] },
+                { code: 248, props: ['ø', '&#248;', '&oslash;', 'latin small letter o with slash'] },
+                { code: 249, props: ['ù', '&#249;', '&ugrave;', 'latin small letter u with grave'] },
+                { code: 250, props: ['ú', '&#250;', '&uacute;', 'latin small letter u with acute'] },
+                { code: 251, props: ['û', '&#251;', '&ucirc;', 'latin small letter u with circumflex'] },
+                { code: 252, props: ['ü', '&#252;', '&uuml;', 'latin small letter u with diaeresis'] },
+                { code: 253, props: ['ý', '&#253;', '&yacute;', 'latin small letter y with acute'] },
+                { code: 254, props: ['þ', '&#254;', '&thorn;', 'latin small letter thorn'] },
+                { code: 255, props: ['ÿ', '&#255;', '&yuml;', 'latin small letter y with diaeresis'] }
+            ];
+        </script>
+        <script type="text/javascript">
+            this.console = this.console || { log: function (msg) { } };
+            var textarea, display, markup, keycode;
+            $(function () {
+                textarea = $('textarea'),
+                display = $('#display'),
+                markup = $('#markup'),
+                keycode = $('#keycode');
+
+                textarea.on('keyup', function (evt) {
+                    var valueString = textarea.val();
+                    var valueCharArray = valueString.split('');
+                    display.html('');
+                    $.each(valueCharArray, function (index, item) {
+                        var code = item.charCodeAt(0);
+                        display.append($('<div>').addClass('code').text(code));
+                    });
+                    display.append($('<div>').css('clear', 'both'));
+                    keycode.text(evt.keyCode);
+                    bindProperties();
+                });
+                display.on('click', '.code', function () {
+                    var charDiv = $(this);
+                    var charString = charDiv.text();
+                    display.find('.selected').removeClass('selected');
+                    charDiv.addClass('selected');
+                    setInfo(charString);
+                });
+                $('[data-property-name]').on('change', bindProperties);
+                
+                bindProperties();
+            });
+
+            function refreshMarkup() {
+                console.log(textarea.html());
+                markup.text(textarea.clone().wrap('<p>').parent().html());
+            }
+
+            function bindProperties() {
+                $('[data-property-name]').each(function (index, obj) {
+                    var item = $(obj);
+                    var prop = item.attr('data-property-name');
+                    var val = item.attr('data-property-value') || item.val();
+                    if (item.attr('type') === 'checkbox') {
+                        if (item.is(':checked')) {
+                            textarea.attr(prop, val);
+                        } else {
+                            textarea.removeAttr(prop);
+                        }
+                    } else {
+                        textarea.attr(prop, val);
+                    }
+                });
+                refreshMarkup();
+            }
+
+            function setInfo(code) {
+                var info = getCodeInfo(code);
+                if (!info || !info.props) {
+                    info = { code: code, props: ['unknown', 'unknown', 'unknown', 'unknown'] };
+                }
+                $('#code').text(code);
+                $('#symbol').text(info.props[0]);
+                $('#htmlNum').text(info.props[1]);
+                $('#htmlName').text(info.props[2]);
+                $('#desc').text(info.props[3]);
+            }
+
+            function getCodeInfo(code) {
+                return jQuery.grep(asciiCodes, function (elem) {
+                    return elem.code == code;
+                })[0];
+            }
+
+        </script>
+    </body>
+</html>
